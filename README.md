@@ -31,7 +31,22 @@ Este comando instalará las siguientes dependencias:
 Para ejecutar el script, utiliza el siguiente comando en la terminal:
 
 ```bash
-./nombre_del_script.js
+./nodeImg
+```
+
+## Uso recomendando
+
+Para ejecutar el script, utiliza el siguiente comando en la terminal:
+
+```bash
+sudo npm link
+
+
+```
+Utiliza el script, utiliza el siguiente:
+
+```bash
+nodeImg
 ```
 
 El script te pedirá el nombre de la carpeta que contiene las imágenes que deseas optimizar. Luego, procesará todas las imágenes en la carpeta, redimensionándolas y comprimiéndolas con diversas técnicas.
