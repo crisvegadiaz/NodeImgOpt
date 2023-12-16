@@ -1,0 +1,64 @@
+#!/usr/bin/env node
+import fse from "fs-extra";
+import sharp from "sharp";
+import process from "process";
+import imagemin from "imagemin";
+import imageminSvgo from "imagemin-svgo";
+import imageminWebp from "imagemin-webp";
+import imageminJpegtran from "imagemin-jpegtran";
+import imageminPngquant from "imagemin-pngquant";
+import imageminGifsicle from "imagemin-gifsicle";
+import readlineSync from "readline-sync";
+
+// Ingreso de datos por consola
+const texto = (message) => {
+  return readlineSync.question(message);
+};
+
+let carpetaImg = texto(" 📁 Nombre de carpeta con las imágenes: ");
+console.log("\n");
+
+// Dicción de carpeta actual
+let diricionActual = process.cwd();
+
+let targetWidth = 1920;
+let inputFolder = diricionActual + "/" + carpetaImg;
+let outputFolder = diricionActual + "/imgOpt";
+
+// Creación de carpeta
+fse.mkdirSync(outputFolder, { recursive: true });
+
+const processImg = async () => {
+  try {
+    const files = await fse.readdir(inputFolder);
+
+    for (const file of files) {
+      let inputPath = `${inputFolder}/${file}`;
+      let outputPath = `${outputFolder}/${file}`;
+
+      await sharp(inputPath).resize(targetWidth).toFile(outputPath);
+
+      await imagemin([outputPath], {
+        destination: outputFolder,
+        plugins: [
+          imageminJpegtran({ quality: 80 }), // Comprimir imagen JPG con calidad del 80%
+          imageminSvgo(),                   // Comprimir imagen SVG
+          imageminWebp({ quality: 80 }),   // Comprimir imagen WebP con calidad del 80%
+          imageminGifsicle(),             // Comprimir imagen GIF
+          imageminPngquant(),            // Comprimir imagen PNG
+        ],
+      });
+
+      console.log(`\t📁 Se ha optimizado la imagen: ${file}`);
+    }
+
+    console.log(
+      "\n 📷 Se ha terminado la optimización de todas tus imágenes 🎉\n"
+    );
+  } catch (error) {
+    console.error("❌ Error de aplicación:", error);
+    console.error(error.stack);
+  }
+};
+
+processImg();
